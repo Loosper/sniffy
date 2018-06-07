@@ -1,6 +1,6 @@
 #include <net/ethernet.h>
 #include <arpa/inet.h>
-#include<netinet/ip.h>
+#include <netinet/ip.h>
 
 #include <iostream>
 
@@ -9,15 +9,13 @@
 
 using namespace std;
 
+#define IP_TCP    6
+#define IP_UDP    17
+#define IP_ICMP   1
 
 class Parser {
     virtual void parse(uint8_t *) = 0;
 };
-
-
-#define IP_TCP    6
-#define IP_UDP    17
-#define IP_ICMP   1
 
 class IPParser: public Parser {
     public:
@@ -29,9 +27,9 @@ class IPParser: public Parser {
         printf("total: %d\n", ntohs(header->ip_len));
         printf("next: %d\n", header->ip_p);
         switch (header->ip_p) {
-            case IP_TCP: printf("TCP"); break;
-            case IP_UDP: printf("UDP"); break;
-            case IP_ICMP: printf("ICMP"); break;
+            case IP_TCP:    printf("TCP");   break;
+            case IP_UDP:    printf("UDP");   break;
+            case IP_ICMP:   printf("ICMP");  break;
         }
 
         printf(" segment\n");
@@ -44,8 +42,8 @@ class EthernetParser: public Parser {
         struct ethhdr *header = (struct ethhdr *) frame;
         IPParser ip_parser = IPParser();
 
-        print_mac(header->h_source);
-        print_mac(header->h_dest);
+        cout << print_mac(header->h_source) << endl;
+        cout << print_mac(header->h_dest) << endl;
 
         switch (ntohs(header->h_proto)) {
             case ETH_P_IP:

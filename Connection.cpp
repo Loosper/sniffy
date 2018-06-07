@@ -34,7 +34,7 @@ uint8_t *Connection::recive() {
     // consider a packet that is too big
     ssize_t bytes = recv(conn, buffer, ETHER_MAX_LEN, 0);
     if (bytes == -1) {
-        perror("worng");
+        perror("wrong");
         // for now; we could print a message
         exit(0);
     }
