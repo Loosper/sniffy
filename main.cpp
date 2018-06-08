@@ -42,8 +42,8 @@ class EthernetParser: public Parser {
         struct ethhdr *header = (struct ethhdr *) frame;
         IPParser ip_parser = IPParser();
 
-        cout << print_mac(header->h_source) << endl;
-        cout << print_mac(header->h_dest) << endl;
+        cout << format_mac(header->h_source) << endl;
+        cout << format_mac(header->h_dest) << endl;
 
         switch (ntohs(header->h_proto)) {
             case ETH_P_IP:

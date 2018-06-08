@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-std::string parse_mac(uint8_t*);
+std::string format_mac(uint8_t*);
 
 #endif
