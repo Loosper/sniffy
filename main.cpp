@@ -2,6 +2,8 @@
 #include <arpa/inet.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <linux/if_arp.h>
+#include <assert.h>
 
 #include <iostream>
 
@@ -44,8 +46,12 @@ class IPParser: public Parser {
             inet_ntop(AF_INET, &header->ip_src, addr, INET_ADDRSTRLEN) << endl;
         cout << "to: " <<
             inet_ntop(AF_INET, &header->ip_dst, addr, INET_ADDRSTRLEN) << endl;
+        cout << "checksum: " <<
+            (header->ip_sum == (calc_ip_checksum(header)) ? "correct" : "wrong") <<
+            endl;
 
         switch (header->ip_p) {
+            // in order to compute the checksum, tcp needs parts of the ip packet
             case IP_TCP: tcp_parser.parse(packet + length * 4);
                             printf("TCP");  break;
             case IP_UDP:    printf("UDP");  break;
@@ -56,8 +62,45 @@ class IPParser: public Parser {
     }
 };
 
+struct arp_body {
+    uint8_t src_ha[6];
+    uint8_t src_pa[4];
+    uint8_t dst_ha[6];
+    uint8_t dst_pa[4];
+};
+
+class ARPParser: public Parser {
+    public:
+    void parse(uint8_t *request) {
+        struct arphdr *header = (struct arphdr *) request;
+
+        // this can't possibly be anyhting else
+        assert(ntohs(header->ar_hrd) == ARPHRD_ETHER);
+        if (ntohs(header->ar_pro) == ETH_P_IP) {
+            printf("iparp\n");
+            assert(header->ar_hln == 6);
+            assert(header->ar_pln == 4);
+        } else {
+            return;
+        }
+        // there's also *_R* of the same
+        switch (ntohs(header->ar_op)) {
+            case ARPOP_REQUEST: printf("request\n");  break;
+            case ARPOP_REPLY: printf("reply\n");  break;
+        }
+
+        struct arp_body *body = (struct arp_body *)(request + sizeof(struct arphdr));
+
+        char addr[INET_ADDRSTRLEN];
+        cout << "source mac: " << format_mac(body->src_ha) << endl;
+        cout << "source ip: " <<
+            inet_ntop(AF_INET, body->src_pa, addr, INET_ADDRSTRLEN) << endl;
+    }
+};
+
 class EthernetParser: public Parser {
     IPParser ip_parser = IPParser();
+    ARPParser arp_parser = ARPParser();
 
     public:
     void parse(uint8_t *frame) {
@@ -66,13 +109,16 @@ class EthernetParser: public Parser {
         cout << format_mac(header->h_source) << endl;
         cout << format_mac(header->h_dest) << endl;
 
+        uint8_t *payload = frame + sizeof(struct ethhdr);
+
         switch (ntohs(header->h_proto)) {
             case ETH_P_IP:
-                ip_parser.parse(frame + sizeof(struct ethhdr));
+                ip_parser.parse(payload);
                 printf("ipv4"); break;
             case ETH_P_IPV6:
                 printf("ipv6"); break;
             case ETH_P_ARP:
+                arp_parser.parse(payload);
                 printf("arp"); break;
             default:
                 printf("id: %X", ntohs(header->h_proto));
