@@ -1,4 +1,4 @@
-DROP DATABASE sniffy;
+DROP DATABASE IF EXISTS sniffy;
 CREATE DATABASE sniffy;
 
 USE sniffy;
@@ -10,7 +10,7 @@ CREATE TABLE mac_address (
 
 CREATE TABLE ipv4_address (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    address BINARY(6) NOT NULL
+    address BINARY(4) NOT NULL
 );
 
 CREATE TABLE frame (
@@ -49,5 +49,5 @@ CREATE UNIQUE INDEX mac_duplicate ON mac_address(address);
 CREATE UNIQUE INDEX ipv4_duplicate ON ipv4_address(address);
 
 CREATE UNIQUE INDEX frame_duplicate ON frame(source, destination);
-CREATE UNIQUE INDEX ipv4_duplicate ON ipv4(source, destination);
+CREATE UNIQUE INDEX ipv4_duplicate ON ipv4_packet(source, destination);
 CREATE UNIQUE INDEX arp_duplicate ON arp_cache(ip, mac);

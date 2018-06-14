@@ -21,17 +21,21 @@
 #include "Connection.h"
 #include "parser.h"
 
-class Sniffer{
+class BaseSniffer {
+    public:
     Connection conn;
     sql::Driver *driver;
     sql::Connection *con;
     sql::Statement *stmt;
     sql::ResultSet *res;
     sql::PreparedStatement *pstmt;
-
-public:
-    Sniffer();
+    BaseSniffer();
     void run();
+    virtual void execute() = 0;
+};
+
+class Sniffer: public BaseSniffer {
+    void execute();
 };
 
 #endif
