@@ -5,9 +5,10 @@ INSERT INTO ipv4_address (address)
 VALUES (?);
 
 INSERT INTO frame (source, destination, total)
-VALUES ((SELECT id FROM mac_address WHERE address = ?), 
-(SELECT id FROM mac_address WHERE address =  ?), ?)
-ON DUPLICATE KEY UPDATE total = total + 1;
+VALUES (
+    (SELECT id FROM mac_address WHERE address = ?),
+    (SELECT id FROM mac_address WHERE address =  ?), ?
+) ON DUPLICATE KEY UPDATE total = total + 1;
 
 -- the last two should be 0 or 1 depending on what happened
 INSERT INTO ipv4_packet (source, destination, total_valid, total_invalid)

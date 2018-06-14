@@ -1,7 +1,21 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+// socket libraries
+#include <net/ethernet.h>
+#include <arpa/inet.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#include <linux/if_arp.h>
+#include <assert.h>
+
+// mysql connector
+#include <mysql_connection.h>
+#include <cppconn/resultset.h>
+
+// stdlib
 #include <iostream>
+
 #include "helpers.h"
 
 using namespace std;
@@ -12,7 +26,7 @@ using namespace std;
 
 class Parser {
     virtual void parse(uint8_t *) = 0;
-    
+
     protected:
     sql::PreparedStatement *pstmt;
 };
@@ -39,7 +53,7 @@ class IPParser: public Parser {
         pstmt = con->prepareStatement("");
         tcp_parser = new TCPParser(con);
     }
-    
+
     ~IPParser(){
         delete tcp_parser;
     }
