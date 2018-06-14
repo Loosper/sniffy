@@ -17,5 +17,5 @@ clean:
 	rm -f $(objects) sniffy
 
 build:
-	g++ -o builder builder.cpp -lmysqlcppconn
-	./builder
+	g++ -o builder.out builder.cpp -lmysqlcppconn
+	./builder.out
