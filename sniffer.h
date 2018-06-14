@@ -23,7 +23,6 @@
 
 class Sniffer{
     Connection conn;
-    EthernetParser eth_parser;
     sql::Driver *driver;
     sql::Connection *con;
     sql::Statement *stmt;

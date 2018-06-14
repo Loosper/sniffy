@@ -1,20 +1,28 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#define IP_TCP    6
-#define IP_UDP    17
-#define IP_ICMP   1
-
+#include <iostream>
 #include "helpers.h"
 
 using namespace std;
 
+#define IP_TCP    6
+#define IP_UDP    17
+#define IP_ICMP   1
+
 class Parser {
     virtual void parse(uint8_t *) = 0;
+    
+    protected:
+    sql::PreparedStatement *pstmt;
 };
 
 class TCPParser: public Parser {
     public:
+    TCPParser(sql::Connection *con){
+        pstmt = con->prepareStatement("");
+    }
+
     void parse(uint8_t *segment) {
         struct tcphdr *header = (struct tcphdr *) segment;
 
@@ -24,9 +32,18 @@ class TCPParser: public Parser {
 };
 
 class IPParser: public Parser {
-    TCPParser tcp_parser = TCPParser();
+    TCPParser *tcp_parser;
 
     public:
+    IPParser(sql::Connection *con){
+        pstmt = con->prepareStatement("");
+        tcp_parser = new TCPParser(con);
+    }
+    
+    ~IPParser(){
+        delete tcp_parser;
+    }
+
     void parse(uint8_t *packet) {
         struct ip *header = (struct ip *) packet;
         char addr[INET_ADDRSTRLEN];
@@ -45,13 +62,14 @@ class IPParser: public Parser {
 
         switch (header->ip_p) {
             // in order to compute the checksum, tcp needs parts of the ip packet
-            case IP_TCP: tcp_parser.parse(packet + length * 4);
+            case IP_TCP: tcp_parser->parse(packet + length * 4);
                             printf("TCP");  break;
             case IP_UDP:    printf("UDP");  break;
             case IP_ICMP:   printf("ICMP"); break;
         }
 
         printf(" segment\n");
+
     }
 };
 
@@ -64,6 +82,10 @@ struct arp_body {
 
 class ARPParser: public Parser {
     public:
+    ARPParser(sql::Connection *con){
+        pstmt = con->prepareStatement("");
+    }
+
     void parse(uint8_t *request) {
         struct arphdr *header = (struct arphdr *) request;
 
@@ -92,10 +114,21 @@ class ARPParser: public Parser {
 };
 
 class EthernetParser: public Parser {
-    IPParser ip_parser = IPParser();
-    ARPParser arp_parser = ARPParser();
+    IPParser *ip_parser;
+    ARPParser *arp_parser;
 
     public:
+    EthernetParser(sql::Connection *con){
+        pstmt = con->prepareStatement("");
+        ip_parser = new IPParser(con);
+        arp_parser = new ARPParser(con);
+    }
+
+    ~EthernetParser(){
+        delete ip_parser;
+        delete arp_parser;
+    }
+
     void parse(uint8_t *frame) {
         struct ethhdr *header = (struct ethhdr *) frame;
 
@@ -106,12 +139,12 @@ class EthernetParser: public Parser {
 
         switch (ntohs(header->h_proto)) {
             case ETH_P_IP:
-                ip_parser.parse(payload);
+                ip_parser->parse(payload);
                 printf("ipv4"); break;
             case ETH_P_IPV6:
                 printf("ipv6"); break;
             case ETH_P_ARP:
-                arp_parser.parse(payload);
+                arp_parser->parse(payload);
                 printf("arp"); break;
             default:
                 printf("id: %X", ntohs(header->h_proto));

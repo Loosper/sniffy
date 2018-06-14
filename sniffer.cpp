@@ -1,7 +1,6 @@
 #include "sniffer.h"
 
 Sniffer::Sniffer(){
-    eth_parser = EthernetParser();
     conn = Connection();
 }
 
@@ -12,6 +11,8 @@ void Sniffer::run(){
 
         con->setSchema("sniffy");
 
+        EthernetParser eth_parser = EthernetParser(con);
+        
         while (1) {
             uint8_t *frame = conn.recive();
             eth_parser.parse(frame);
