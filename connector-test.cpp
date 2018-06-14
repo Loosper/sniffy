@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Copyright 2008, 2010, Oracle and/or its affiliates. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify
@@ -19,6 +20,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+=======
+>>>>>>> 3c3821e... S C A M
 /* Standard C++ includes */
 #include <stdlib.h>
 #include <iostream>
