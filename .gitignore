@@ -1,4 +1,8 @@
 *.o
 sniffy
+<<<<<<< Updated upstream
 
 *.swp
+=======
+*.out
+>>>>>>> Stashed changes

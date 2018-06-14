@@ -10,3 +10,7 @@ Connection.o: Connection.h
 
 clean:
 	rm -f $(objects) sniffy
+
+build:
+	g++ -o builder builder.cpp -lmysqlcppconn
+	./builder
