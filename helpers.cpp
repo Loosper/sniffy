@@ -1,9 +1,9 @@
 #include <netinet/ip.h>
-
 #include <cstdint>
 #include <iostream>
 #include <string>
 
+#include "helpers.h"
 
 std::string format_mac(uint8_t *mac) {
     char smac[18] = {'\0'};

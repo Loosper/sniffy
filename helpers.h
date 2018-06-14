@@ -1,8 +1,6 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#include <netinet/ip.h>
-
 #include <cstdint>
 #include <string>
 
