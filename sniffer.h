@@ -1,6 +1,8 @@
 #ifndef SNIFFER_H
 #define SNIFFER_H
 
+#include <iostream>
+
 #include <net/ethernet.h>
 #include <arpa/inet.h>
 #include <netinet/ip.h>
@@ -8,7 +10,6 @@
 #include <linux/if_arp.h>
 #include <assert.h>
 
-#include <iostream>
 
 #include <mysql_connection.h>
 
@@ -21,7 +22,7 @@
 #include "Connection.h"
 #include "parser.h"
 
-class BaseSniffer {
+class SQLConnection {
     public:
     Connection conn;
     sql::Driver *driver;
@@ -29,12 +30,12 @@ class BaseSniffer {
     sql::Statement *stmt;
     sql::ResultSet *res;
     sql::PreparedStatement *pstmt;
-    BaseSniffer();
+    SQLConnection();
     void run();
     virtual void execute() = 0;
 };
 
-class Sniffer: public BaseSniffer {
+class Sniffer: public SQLConnection {
     void execute();
 };
 
