@@ -23,7 +23,7 @@ CREATE TABLE frame (
     FOREIGN KEY (destination) REFERENCES mac_address(id)
 );
 
-CREATE TABLE packet (
+CREATE TABLE ipv4_packet (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     source INTEGER NOT NULL,
     destination INTEGER NOT NULL,
@@ -38,6 +38,7 @@ CREATE TABLE packet (
 CREATE TABLE arp_cache (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     mac INTEGER NOT NULL,
+    total INTEGER NOT NULL,
     ip INTEGER NOT NULL,
 
     FOREIGN KEY (mac) REFERENCES mac_address(id),
