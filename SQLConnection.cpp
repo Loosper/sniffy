@@ -8,6 +8,7 @@
 #include <cppconn/prepared_statement.h>
 
 #include <iostream>
+#include <iomanip>
 
 #include <algorithm>
 #include <string>
@@ -126,19 +127,23 @@ void Selector::execute() {
 
     cout << table_ << endl;
 
-    cout << "|  ";
+    cout << "|";
     for(int i = 0 ; fields[i] != "NULL" ; ++ i){
-        cout << fields[i] << "  |  ";
+        if(fields[i] == "ADDRESS" || fields[i] == "IP" || fields[i] == "MAC")
+            cout << setw(17) << std::left << fields[i] << "|";
+        else
+            cout << setw(6) << std::left << fields[i] << "|";
     }
 
     cout << endl;
 
     while(res->next()){
+        cout << "|";
         for(int i = 0 ; fields[i] != "NULL" ; ++ i){
-            if(i == 0)
-                cout << res->getInt("ID") << " ";
+            if(fields[i] == "ADDRESS" || fields[i] == "IP" || fields[i] == "MAC")
+                cout << setw(17) << res->getString(fields[i]) << "|";
             else
-                cout << res->getString(fields[i]) << " ";
+                cout << setw(6) << res->getString(fields[i]) << "|";
         }
         cout << endl;
     }

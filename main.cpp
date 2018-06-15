@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <iomanip>
+#include <iostream>
 #include <sys/types.h>
 #include <signal.h>
 
@@ -11,7 +13,7 @@ using namespace std;
 
 int main() {
     string command = "";
-    cout << "\
+    cout << "\e[1;32m\
                        _  __  __       \n \
                      (_)/ _|/ _|      \n \
             ___ _ __  _| |_| |_ _   _ \n \
@@ -21,15 +23,23 @@ int main() {
                                  __/ |\n \
                                 |___/  \n";
 
+    cout << "COMMANDS: \n";
+    cout << setw(15) << std::left << "sniff:" << "start sniffing network packets\n";
+    cout << setw(15) << std::left << "mac_address:" << "view recorded MAC addresses\n";
+    cout << setw(15) << std::left << "ipv4_address:" << "view recorded IP addresses\n";
+    cout << setw(15) << std::left << "frame: view" << "recorded Ethernet frames\n";
+    cout << setw(15) << std::left << "ipv4_packet:" << "view recorded IP packets\n";
+    cout << setw(15) << std::left << "arp_cache:" << "view recorded ARP caches\n";
     cout <<endl;
 
     while(command != "exit") {
 
         // cout << ": ";
         cin >> command;
+        cout << endl;
         if (cin.eof())
             break;
-
+        
         pid_t pid = fork();
 
         if(pid == 0){

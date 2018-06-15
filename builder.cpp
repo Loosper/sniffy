@@ -40,6 +40,7 @@ public:
         stmt->execute("DROP TABLE IF EXISTS frame");
         stmt->execute("DROP TABLE IF EXISTS ipv4_address");
         stmt->execute("DROP TABLE IF EXISTS mac_address");
+        stmt->execute("DROP TABLE IF EXISTS arp_type");
 
         stmt->execute("CREATE TABLE mac_address (\
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
@@ -49,6 +50,11 @@ public:
         stmt->execute("CREATE TABLE ipv4_address (\
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
             address VARCHAR(16) NOT NULL\
+        )");
+        
+        stmt->execute("CREATE TABLE arp_type (\
+            id INTEGER NOT NULL PRIMARY KEY,\
+            name VARCHAR(50)\
         )");
 
         stmt->execute("CREATE TABLE frame (\
@@ -74,7 +80,9 @@ public:
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
             mac INTEGER NOT NULL,\
             total INTEGER NOT NULL,\
+            type INTEGER NOT NULL,\
             ip INTEGER NOT NULL,\
+            FOREIGN KEY (type) REFERENCES arp_type(id),\
             FOREIGN KEY (mac) REFERENCES mac_address(id),\
             FOREIGN KEY (ip) REFERENCES ipv4_address(id)\
         );");
