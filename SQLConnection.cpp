@@ -59,7 +59,7 @@ void Sniffer::execute() {
     }
 }
 
-Selector::Selector(string table){
+Selector::Selector(string table): SQLConnection(){
     table_ = table;
 }
 

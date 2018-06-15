@@ -11,6 +11,18 @@ using namespace std;
 
 int main() {
     string command = "";
+    cout << "\
+                       _  __  __       \n \
+                     (_)/ _|/ _|      \n \
+            ___ _ __  _| |_| |_ _   _ \n \
+           / __| '_ \\| |  _|  _| | | |\n \
+           \\_  \\ | | | | | | | | |_| |\n \
+           |___/_| |_|_|_| |_|  \\__, |\n \
+                                 __/ |\n \
+                                |___/  \n";
+
+    cout <<endl;
+
     while(command != "exit") {
 
         // cout << ": ";
