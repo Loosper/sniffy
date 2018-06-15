@@ -5,12 +5,12 @@ USE sniffy;
 
 CREATE TABLE mac_address (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    address BINARY(6) NOT NULL
+    address CHAR(17) NOT NULL
 );
 
 CREATE TABLE ipv4_address (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    address BINARY(4) NOT NULL
+    address VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE frame (
@@ -38,11 +38,13 @@ CREATE TABLE ipv4_packet (
 CREATE TABLE arp_cache (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     mac INTEGER NOT NULL,
-    total INTEGER NOT NULL,
     ip INTEGER NOT NULL,
+    total INTEGER NOT NULL,
+    -- type INTEGER NOT NULL,
 
     FOREIGN KEY (mac) REFERENCES mac_address(id),
     FOREIGN KEY (ip) REFERENCES ipv4_address(id)
+    -- FOREIGN KEY (type) REFERENCES arp_types(id)
 );
 
 CREATE UNIQUE INDEX mac_duplicate ON mac_address(address);
