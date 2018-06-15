@@ -14,7 +14,7 @@
 #include <cppconn/statement.h>
 #include <cppconn/prepared_statement.h>
 
-#include "sniffer.h"
+#include "SQLConnection.h"
 
 #define HOST "localhost"
 #define USER "root"
