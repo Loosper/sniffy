@@ -5,8 +5,12 @@
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
 
 #include <iostream>
+
+#include <algorithm>
+#include <string>
 
 #include "SQLConnection.h"
 
@@ -61,33 +65,78 @@ Selector::Selector(string table){
 
 void Selector::execute() {
     sql::PreparedStatement *pstmt;
+    sql::ResultSet *res;
+    
+    string mac_address[] = {"ID", "ADDRESS", "NULL"};
+    string ipv4_address[] = {"ID", "ADDRESS", "NULL"};
+    string frame[] = {"ID", "SOURCE", "DESTINATION", "TOTAL", "NULL"};
+    string ipv4_packet[] = {"ID", "SOURCE", "DESTINATION", 
+                "TOTAL_VALID", "TOTAL_INVALID", "NULL"};
+    string arp_cache[] = {"ID", "MAC", "IP", "TOTAL", "NULL"};
+    
+    string *fields;
+    
     if(table_ == "mac_address"){ 
-        pstmt = con->prepareStatement("SELECT * FROM mac_address");
+        pstmt = con->prepareStatement("SELECT id AS \'ID\', address AS \'ADDRESS\' \
+            FROM mac_address");
+        fields = mac_address;
     }else if(table_ == "ipv4_address"){
-        pstmt = con->prepareStatement("SELECT * FROM ipv4_address");
+        pstmt = con->prepareStatement("SELECT id AS \'ID\', address AS \'ADDRESS\' \
+            FROM ipv4_address");
+        fields = ipv4_address;
     }else if(table_ == "frame"){
-        pstmt = con->prepareStatement("SELECT f_id, mac_s.address, \
-            mac_d.address, f.total \
+        pstmt = con->prepareStatement("SELECT f.id AS \'ID\', \
+            mac_s.address AS \'SOURCE\', \
+            mac_d.address AS \'DESTINATION\', f.total AS \'TOTAL\'\
             FROM frame f \
             INNER JOIN mac_address mac_s \
                 ON f.source = mac_s.id \
             INNER JOIN mac_address mac_d \
                 ON f.destination = mac_d.id");
+        fields = frame;
     }else if(table_ == "ipv4_packet"){
-        pstmt = con->prepareStatement("SELECT pac.id, ip_s.address, \
-            ip_d.address, pac.total_valid, pac.total_invalid \
+        pstmt = con->prepareStatement("SELECT pac.id AS \'ID\', \
+            ip_s.address AS \'SOURCE\', ip_d.address AS \'DESTINATION\', \
+            pac.total_valid AS \'TOTAL_VALID\', \
+            pac.total_invalid AS \'TOTAL_INVALID\' \
             FROM ipv4_packet pac \
             INNER JOIN ipv4_address ip_s \
                 ON pac.source = ip_s.id \
             INNER JOIN ipv4_address ip_d \
                 ON pac.destination = ip_d.id");
+        fields = ipv4_packet;
     }else if(table_ == "arp_cache"){
-        pstmt = con->prepareStatement("SELECT arp.id, mac.address, \
-            ip.address, arp.total \
+        pstmt = con->prepareStatement("SELECT arp.id AS \'ID\', \
+            mac.address AS \'MAC\', \
+            ip.address AS \'IP\', arp.total AS \'TOTAL\' \
             FROM arp_cache arp \
             INNER JOIN mac_address mac \
                 ON arp.mac = mac.id \
             INNER JOIN ipv4_address ip \
                 ON arp.ip = ip.id");
+        fields = arp_cache;
+    }
+   
+    res = pstmt->executeQuery();
+    
+    std::transform(table_.begin(), table_.end(),table_.begin(), ::toupper); 
+    
+    cout << table_ << endl;
+    
+    cout << "|  ";
+    for(int i = 0 ; fields[i] != "NULL" ; ++ i){
+        cout << fields[i] << "  |  ";
+    }
+
+    cout << endl;
+
+    while(res->next()){
+        for(int i = 0 ; fields[i] != "NULL" ; ++ i){
+            if(i == 0)
+                cout << res->getInt("ID") << " ";
+            else
+                cout << res->getString(fields[i]) << " ";
+        }
+        cout << endl;
     }
 }
