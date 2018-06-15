@@ -24,6 +24,10 @@ SQLConnection::SQLConnection(string host, string user, string pass, string datab
     con->setSchema(database);
 }
 
+SQLConnection::~SQLConnection(){
+    delete con;
+}
+
 void SQLConnection::run(){
     try {
         execute();
@@ -49,4 +53,49 @@ void Sniffer::execute() {
         delete[] frame;
         // break;
     }
+}
+
+Selector::Selector(string table, pair<string, string> filter){
+    table_ = table;
+    filter_ = filter;
+}
+
+void Selector::execute() {
+    sql::PreparedStatement *pstmt;
+    if(table_ == "mac_address"){ 
+        pstmt = con->prepareStatement("SELECT * FROM mac_address \
+            WHERE ? = ?");
+    }else if(table_ == "ipv4_address"){
+        pstmt = con->prepareStatement("SELECT * FROM ipv4_address \
+            WHERE ? = ?");
+    }else if(table_ == "frame"){
+        pstmt = con->prepareStatement("SELECT f_id, mac_s.address, \
+            mac_d.address, f.total \
+            FROM frame f \
+            INNER JOIN mac_address mac_s \
+                ON f.source = mac_s.id \
+            INNER JOIN mac_address mac_d \
+                ON f.destination = mac_d.id \
+            WHERE ? = ?");
+    }else if(table_ == "ipv4_packet"){
+        pstmt = con->prepareStatement("SELECT pac.id, ip_s.address, \
+            ip_d.address, pac.total_valid, pac.total_invalid \
+            FROM ipv4_packet pac \
+            INNER JOIN ipv4_address ip_s \
+                ON pac.source = ip_s.id \
+            INNER JOIN ipv4_address ip_d \
+                ON pac.destination = ip_d.id \
+            WHERE ? = ?");
+    }else if(table_ == "arp_cache"){
+        pstmt = con->prepareStatement("SELECT arp.id, mac.address, \
+            ip.address, arp.total \
+            FROM arp_cache arp \
+            INNER JOIN mac_address mac \
+                ON arp.mac = mac.id \
+            INNER JOIN ipv4_address ip \
+                ON arp.ip = ip.id \
+            WHERE ? = ?");
+    }
+    
+
 }
