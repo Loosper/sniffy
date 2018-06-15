@@ -8,8 +8,12 @@
 // stdlib
 #include <iostream>
 
+#include <utility>
+
 #include "Connection.h"
 #include "parser.h"
+
+using namespace std;
 
 class SQLConnection {
 protected:
@@ -18,6 +22,7 @@ protected:
 
     SQLConnection();
     SQLConnection(std::string, std::string, std::string, std::string);
+    ~SQLConnection();
 
 public:
     void run();
@@ -28,5 +33,16 @@ class Sniffer: public SQLConnection {
     Connection conn;
     void execute();
 };
+
+class Selector: public SQLConnection {
+    string table_;
+    pair<string, string> filter_;
+
+    void execute();
+
+public:
+    Selector(string);
+};
+
 
 #endif
