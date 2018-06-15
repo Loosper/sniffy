@@ -12,10 +12,14 @@
 #include "parser.h"
 
 class SQLConnection {
-    public:
+protected:
     sql::Driver *driver;
     sql::Connection *con;
+
     SQLConnection();
+    SQLConnection(std::string, std::string, std::string, std::string);
+
+public:
     void run();
     virtual void execute() = 0;
 };

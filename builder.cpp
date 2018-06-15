@@ -24,16 +24,22 @@
 using namespace std;
 
 class Builder: public SQLConnection {
+public:
+    Builder() : SQLConnection(){}
+    Builder(string host, string user, string pass, string database) : SQLConnection(host, user, pass, database){}
+
     void execute() {
-        string url(HOST);
-        const string user(USER);
-        const string pass(PASS);
-        const string database(DB);
+        // string url(HOST);
+        // const string user(USER);
+        // const string pass(PASS);
+        // const string database(DB);
     }
 };
 
 int main() {
     Builder builder = Builder();
+
+    builder.run();
 }
 
 #endif

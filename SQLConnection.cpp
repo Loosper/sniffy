@@ -14,6 +14,12 @@ SQLConnection::SQLConnection(){
     con->setSchema("sniffy");
 }
 
+SQLConnection::SQLConnection(string host, string user, string pass, string database){
+    driver = get_driver_instance();
+    con = driver->connect(host, user, pass);
+    con->setSchema(database);
+}
+
 void SQLConnection::run(){
     try {
         execute();
