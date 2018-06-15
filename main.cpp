@@ -5,15 +5,11 @@
 #include <sys/types.h>
 #include <signal.h>
 
-#include "builder.h"
+#include "builder.cpp"
 
 using namespace std;
 
 int main() {
-    Sniffer snif = Sniffer();
-
-    snif.run();
-
     string command = "";
     while(command != "exit") {
 
@@ -22,7 +18,7 @@ int main() {
 
         pid_t pid = fork();
 
-        if(pid = 0){
+        if(pid == 0){
             if(command == "build"){
                 Builder builder = Builder();
                 builder.run();

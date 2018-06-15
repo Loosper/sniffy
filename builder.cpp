@@ -96,10 +96,4 @@ public:
     }
 };
 
-int main() {
-    Builder builder = Builder();
-
-    builder.run();
-}
-
 #endif
