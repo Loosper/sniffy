@@ -27,6 +27,8 @@ int main() {
 
         // cout << ": ";
         cin >> command;
+        if (cin.eof())
+            break;
 
         pid_t pid = fork();
 
