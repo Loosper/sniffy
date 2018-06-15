@@ -5,16 +5,26 @@
 
 #include <cstdint>
 #include <iostream>
+#include <string>
 
 #define IP_TCP    6
 #define IP_UDP    17
 #define IP_ICMP   1
 
 class Parser {
-    virtual void parse(uint8_t *) = 0;
-
     protected:
-    sql::PreparedStatement *pstmt;
+    sql::Connection *con;
+    sql::PreparedStatement *mac_query;
+    sql::PreparedStatement *ipv4_query;
+    sql::PreparedStatement *total_query;
+
+    Parser(sql::Connection *con);
+    virtual ~Parser();
+    void add_mac(std::string&);
+    void add_ipv4(char *);
+
+    public:
+    virtual void parse(uint8_t *) = 0;
 };
 
 struct arp_body {
