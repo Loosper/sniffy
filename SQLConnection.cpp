@@ -51,6 +51,9 @@ void SQLConnection::run(){
 void Sniffer::execute() {
     EthernetParser eth_parser = EthernetParser(con);
 
+    string iface = "wlp2s0";
+    conn.set_promiscuous((char *)iface.c_str());
+
     while (1) {
         uint8_t *frame = conn.recive();
         eth_parser.parse(frame);

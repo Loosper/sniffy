@@ -30,6 +30,7 @@ int main() {
     cout << setw(15) << std::left << "frame: view" << "recorded Ethernet frames\n";
     cout << setw(15) << std::left << "ipv4_packet:" << "view recorded IP packets\n";
     cout << setw(15) << std::left << "arp_cache:" << "view recorded ARP caches\n";
+    cout << setw(15) << std::left << "build:" << "build the databse\n";
     cout <<endl;
 
     while(command != "exit") {
@@ -39,7 +40,7 @@ int main() {
         cout << endl;
         if (cin.eof())
             break;
-        
+
         pid_t pid = fork();
 
         if(pid == 0){

@@ -51,7 +51,7 @@ public:
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
             address VARCHAR(16) NOT NULL\
         )");
-        
+
         stmt->execute("CREATE TABLE arp_type (\
             id INTEGER NOT NULL PRIMARY KEY,\
             name VARCHAR(50)\

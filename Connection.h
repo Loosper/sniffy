@@ -13,7 +13,7 @@ class Connection {
     ~Connection();
     uint8_t *recive();
     void bind_to_iface(char *iface);
-    // void set_promiscuous();
+    void set_promiscuous(char *);
 };
 
 #endif

@@ -59,12 +59,13 @@ void Connection::bind_to_iface(char *iface) {
     }
 }
 
-// void Connection::set_promiscuous() {
-//     struct ifreq ifr;
-//
-//     ifr.ifr_flags |= IFF_PROMISC;
-//     if (ioctl(conn, SIOCSIFFLAGS, &ifr) == -1) {
-//         perror("Ioctl failed");
-//         exit(0);
-//     }
-// }
+void Connection::set_promiscuous(char * if_name) {
+    struct ifreq ifr;
+    strncpy((char *)ifr.ifr_name, if_name, IF_NAMESIZE);
+
+    ifr.ifr_flags |= IFF_PROMISC;
+    if (ioctl(conn, SIOCSIFFLAGS, &ifr) == -1) {
+        perror("Ioctl failed");
+        exit(0);
+    }
+}
