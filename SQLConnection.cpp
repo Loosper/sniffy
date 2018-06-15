@@ -66,17 +66,17 @@ Selector::Selector(string table){
 void Selector::execute() {
     sql::PreparedStatement *pstmt;
     sql::ResultSet *res;
-    
+
     string mac_address[] = {"ID", "ADDRESS", "NULL"};
     string ipv4_address[] = {"ID", "ADDRESS", "NULL"};
     string frame[] = {"ID", "SOURCE", "DESTINATION", "TOTAL", "NULL"};
-    string ipv4_packet[] = {"ID", "SOURCE", "DESTINATION", 
+    string ipv4_packet[] = {"ID", "SOURCE", "DESTINATION",
                 "TOTAL_VALID", "TOTAL_INVALID", "NULL"};
-    string arp_cache[] = {"ID", "MAC", "IP", "TOTAL", "NULL"};
-    
+    string arp_cache[] = {"ID", "MAC", "IP", "TYPE","TOTAL", "NULL"};
+
     string *fields;
-    
-    if(table_ == "mac_address"){ 
+
+    if(table_ == "mac_address"){
         pstmt = con->prepareStatement("SELECT id AS \'ID\', address AS \'ADDRESS\' \
             FROM mac_address");
         fields = mac_address;
@@ -108,21 +108,24 @@ void Selector::execute() {
     }else if(table_ == "arp_cache"){
         pstmt = con->prepareStatement("SELECT arp.id AS \'ID\', \
             mac.address AS \'MAC\', \
-            ip.address AS \'IP\', arp.total AS \'TOTAL\' \
+            ip.address AS \'IP\', type.name AS \'TYPE\',\
+            arp.total AS \'TOTAL\' \
             FROM arp_cache arp \
             INNER JOIN mac_address mac \
                 ON arp.mac = mac.id \
             INNER JOIN ipv4_address ip \
-                ON arp.ip = ip.id");
+                ON arp.ip = ip.id \
+            INNER JOIN arp_type type \
+                ON arp.type = type.id");
         fields = arp_cache;
     }
-   
+
     res = pstmt->executeQuery();
-    
-    std::transform(table_.begin(), table_.end(),table_.begin(), ::toupper); 
-    
+
+    std::transform(table_.begin(), table_.end(),table_.begin(), ::toupper);
+
     cout << table_ << endl;
-    
+
     cout << "|  ";
     for(int i = 0 ; fields[i] != "NULL" ; ++ i){
         cout << fields[i] << "  |  ";

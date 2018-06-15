@@ -20,9 +20,11 @@ $(objects) $(sniffy_main) $(builder_main): helpers.h
 Connection.o: Connection.h
 parser.o: parser.h
 SQLConnection.o: SQLConnection.h
+main.o: builder.cpp
 
 clean:
 	rm -f $(objects) sniffy
+	rm -f $(sniffy_main) $(builder_main)
 
 build: $(builder_main)
 	g++ -o builder.out $(objects) $(builder_main) -lmysqlcppconn

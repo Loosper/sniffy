@@ -47,7 +47,6 @@ void Parser::add_ipv4(char *ip) {
 }
 
 TCPParser::TCPParser(sql::Connection *con): Parser(con) {
-    // pstmt = con->prepareStatement("");
 }
 
 void TCPParser::parse(uint8_t *segment) {
@@ -63,8 +62,8 @@ IPParser::IPParser(sql::Connection *con): Parser(con) {
     total_query = con->prepareStatement(
         "INSERT INTO ipv4_packet (source, destination, total_valid, total_invalid)\
         VALUES (\
-            (SELECT id FROM ipv4_address WHERE address =  ?),\
-            (SELECT id FROM ipv4_address WHERE address =  ?),\
+            (SELECT id FROM ipv4_address WHERE address = ?),\
+            (SELECT id FROM ipv4_address WHERE address = ?),\
             ?, ?\
         )\
         ON DUPLICATE KEY UPDATE\
@@ -95,19 +94,6 @@ void IPParser::parse(uint8_t *packet) {
     cout << "to: " << dest_addr << endl;
     cout << "checksum: " << ((valid) ? "correct" : "wrong") << endl;
 
-    add_ipv4(src_addr);
-    add_ipv4(dest_addr);
-
-    total_query->setString(1, src_addr);
-    total_query->setString(2, dest_addr);
-    total_query->setInt(3, valid);
-    total_query->setInt(4, ~valid);
-    // i dont know sql; this there could be a way without this
-    total_query->setInt(5, valid);
-    // BUG: this is wrong
-    total_query->setInt(6, ~valid);
-    total_query->executeUpdate();
-
     switch (header->ip_p) {
         // in order to compute the checksum, tcp needs parts of the ip packet
         case IP_TCP: tcp_parser->parse(packet + length * 4);
@@ -117,16 +103,31 @@ void IPParser::parse(uint8_t *packet) {
     }
 
     printf(" segment\n");
+
+    add_ipv4(src_addr);
+    add_ipv4(dest_addr);
+
+    // cout << "validity: " << valid << "  "<< !valid << endl;
+
+    total_query->setString(1, src_addr);
+    total_query->setString(2, dest_addr);
+    total_query->setInt(3, valid);
+    total_query->setInt(4, !valid);
+    // i dont know sql; this there could be a way without this
+    total_query->setInt(5, valid);
+    // BUG: this is wrong
+    total_query->setInt(6, !valid);
+    total_query->executeUpdate();
 }
 
 ARPParser::ARPParser(sql::Connection *con): Parser(con) {
     // TODO: add type
     total_query = con->prepareStatement(
-        "INSERT INTO arp_cache (mac, ip, total)\
+        "INSERT INTO arp_cache (mac, ip, total, type)\
         VALUES (\
             (SELECT id FROM mac_address WHERE address = ?),\
             (SELECT id FROM ipv4_address WHERE address =  ?),\
-            ?\
+            ?, ?\
         ) ON DUPLICATE KEY UPDATE total = total + 1;"
     );
 }
@@ -143,8 +144,9 @@ void ARPParser::parse(uint8_t *request) {
     } else {
         return;
     }
+    int arp_type = ntohs(header->ar_op);;
     // there's also *_R* of the same
-    switch (ntohs(header->ar_op)) {
+    switch (arp_type) {
         case ARPOP_REQUEST: printf("request\n");  break;
         case ARPOP_REPLY: printf("reply\n");  break;
     }
@@ -166,7 +168,8 @@ void ARPParser::parse(uint8_t *request) {
     total_query->setString(1, src_mac);
     total_query->setString(2, src_ip);
     total_query->setInt(3, 1);
-    // total_query->executeUpdate();
+    total_query->setInt(4, arp_type);
+    total_query->executeUpdate();
 }
 
 EthernetParser::EthernetParser(sql::Connection *con): Parser(con) {
@@ -196,13 +199,6 @@ void EthernetParser::parse(uint8_t *frame) {
 
     string src = format_mac(header->h_source);
     string dest = format_mac(header->h_dest);
-    add_mac(src);
-    add_mac(dest);
-
-    total_query->setString(1, src);
-    total_query->setString(2, dest);
-    total_query->setInt(3, 1);
-    total_query->executeUpdate();
 
     cout << src << endl;
     cout << dest << endl;
@@ -222,4 +218,12 @@ void EthernetParser::parse(uint8_t *frame) {
             printf("id: %X", ntohs(header->h_proto));
     }
     printf(" packet\n\n");
+
+    add_mac(src);
+    add_mac(dest);
+
+    total_query->setString(1, src);
+    total_query->setString(2, dest);
+    total_query->setInt(3, 1);
+    total_query->executeUpdate();
 }

@@ -82,8 +82,11 @@ public:
         stmt->execute("CREATE UNIQUE INDEX mac_duplicate ON mac_address(address)");
         stmt->execute("CREATE UNIQUE INDEX ipv4_duplicate ON ipv4_address(address);");
         stmt->execute("CREATE UNIQUE INDEX frame_duplicate ON frame(source, destination)");
-        stmt->execute("CREATE UNIQUE INDEX ipv4_duplicate ON ipv4_packet(source, destination)");
-        stmt->execute("CREATE UNIQUE INDEX arp_duplicate ON arp_cache(ip, mac)");
+        stmt->execute("CREATE UNIQUE INDEX arp_type_duplicate ON arp_type(name)");
+        stmt->execute("CREATE UNIQUE INDEX ipv4_packet_duplicate ON ipv4_packet(source, destination)");
+        stmt->execute("CREATE UNIQUE INDEX arp_duplicate ON arp_cache(ip, mac, type)");
+
+        stmt->execute("INSERT INTO arp_type (id, name) VALUES (1, 'REQUEST'), (2, 'REPLY')");
 
         delete stmt;
 
