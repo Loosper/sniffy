@@ -41,7 +41,7 @@ class Selector: public SQLConnection {
     void execute();
 
 public:
-    Selector(string, pair<string, string>);
+    Selector(string);
 };
 
 #endif
