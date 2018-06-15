@@ -10,7 +10,7 @@ CREATE TABLE mac_address (
 
 CREATE TABLE ipv4_address (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    address VARCHAR(100) NOT NULL
+    address VARCHAR(16) NOT NULL
 );
 
 CREATE TABLE frame (

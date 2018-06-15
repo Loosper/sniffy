@@ -13,7 +13,7 @@ int main() {
     string command = "";
     while(command != "exit") {
 
-        cout << ": ";
+        // cout << ": ";
         cin >> command;
 
         pid_t pid = fork();
@@ -28,13 +28,15 @@ int main() {
             } else if( command == "mac_address" || command == "ipv4_address" || command == "frame" || command == "ipv4_packet" || command == "arp_cache"){
                 Selector selector = Selector(command);
                 selector.run();
-            } else {
+            } else if( command != "exit"){
                 cout << "E: Unknown command" << endl;
             }
             exit(0);
         } else if (pid > 0){
             if(command == "snif exit"){
                 kill(pid, SIGKILL);
+            } else if (command == "exit"){
+                exit(0);
             }
         } else {
             perror("fork");

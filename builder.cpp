@@ -30,11 +30,6 @@ public:
     Builder(string host, string user, string pass, string database) : SQLConnection(host, user, pass, database){}
 
     void execute() {
-
-        // ifstream t("database.sql");
-        // stringstream buffer;
-        // buffer << t.rdbuf();
-
         sql::Statement *stmt;
 
         stmt = con->createStatement();
@@ -48,12 +43,12 @@ public:
 
         stmt->execute("CREATE TABLE mac_address (\
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
-            address BINARY(6) NOT NULL\
+            address CHAR(17) NOT NULL\
         )");
 
         stmt->execute("CREATE TABLE ipv4_address (\
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\
-            address BINARY(4) NOT NULL\
+            address VARCHAR(16) NOT NULL\
         )");
 
         stmt->execute("CREATE TABLE frame (\
