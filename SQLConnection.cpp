@@ -6,7 +6,11 @@
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
 
+#include <iostream>
+
 #include "SQLConnection.h"
+
+using namespace std;
 
 SQLConnection::SQLConnection(){
     driver = get_driver_instance();
