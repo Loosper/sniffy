@@ -52,7 +52,7 @@ void Sniffer::execute() {
     EthernetParser eth_parser = EthernetParser(con);
 
     string iface = "wlp2s0";
-    conn.set_promiscuous((char *)iface.c_str());
+    // conn.set_promiscuous((char *)iface.c_str());
 
     while (1) {
         uint8_t *frame = conn.recive();
@@ -135,7 +135,7 @@ void Selector::execute() {
         if(fields[i] == "ADDRESS" || fields[i] == "IP" || fields[i] == "MAC")
             cout << setw(17) << std::left << fields[i] << "|";
         else
-            cout << setw(6) << std::left << fields[i] << "|";
+            cout << setw(7) << std::left << fields[i] << "|";
     }
 
     cout << endl;
@@ -146,7 +146,7 @@ void Selector::execute() {
             if(fields[i] == "ADDRESS" || fields[i] == "IP" || fields[i] == "MAC")
                 cout << setw(17) << res->getString(fields[i]) << "|";
             else
-                cout << setw(6) << res->getString(fields[i]) << "|";
+                cout << setw(7) << res->getString(fields[i]) << "|";
         }
         cout << endl;
     }

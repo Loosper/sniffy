@@ -1,13 +1,14 @@
-objects = SQLConnection.o Connection.o helpers.o parser.o
-sniffy_main = main.o
-builder_main = builder.o
+objects = src/SQLConnection.o src/Connection.o src/helpers.o src/parser.o
+sniffy_main = src/main.o
+builder_main = src/builder.o
 
 MYSQL_INCLUDE_PATH = /usr/include/cppconn
 MYSQL_LINK_PATH = /usr/lib
+INCLUDE_PATH = include/
 
 CXXFLAGS = -std=c++11
 CFLAGS = -Wall -pedantic -g
-CPPFLAGS = -I $(MYSQL_INCLUDE_PATH)
+CPPFLAGS = -I $(MYSQL_INCLUDE_PATH) -I $(INCLUDE_PATH)
 LDLIBS = -L$(MYSQL_LINK_PATH)
 LDFLAGS = -lmysqlcppconn
 
@@ -16,11 +17,11 @@ LDFLAGS = -lmysqlcppconn
 sniffy: $(objects) $(sniffy_main)
 	g++ -o sniffy $(objects) $(sniffy_main) $(LDLIBS) $(LDFLAGS)
 
-$(objects) $(sniffy_main) $(builder_main): helpers.h
-Connection.o: Connection.h
-parser.o: parser.h
-SQLConnection.o: SQLConnection.h
-main.o: builder.cpp
+$(objects) $(sniffy_main) $(builder_main): include/helpers.h
+Connection.o: include/Connection.h
+parser.o: include/parser.h
+SQLConnection.o: include/SQLConnection.h
+main.o: src/builder.cpp
 
 clean:
 	rm -f $(objects) sniffy
